@@ -1,28 +1,58 @@
-# CloudShield 🛡️
+# CloudShield WAF Simulator — Enhanced
 
-A simple, fast, and explainable Web Application Firewall (WAF) project.
+## Project Structure
 
-## Features
-- Detects SQL Injection (e.g., `DROP TABLE`)
-- Detects Cross-Site Scripting (XSS)
-- Logs all attacks to `logs.txt`
-- Explains the reasoning behind the block
-- Interactive Web Interface & Security Dashboard
+```
+app.py          — Flask application (routes, templates)
+security.py     — Threat detection engine (rules, scoring)
+rate_limiter.py — Sliding-window IP rate limiter
+logger.py       — Structured event logger + stats
+logs.txt        — Auto-created at runtime
+```
 
-## Installation
+## Running
 
-1. Make sure you have Python installed.
-2. Open terminal in this folder and install Flask:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Run the application:
-   ```bash
-   python app.py
-   ```
+```bash
+pip install flask
+python app.py
+```
 
-## Usage
-1. Open your browser to `http://127.0.0.1:5000`
-2. Test a safe payload like `hello` -> This will work fine.
-3. Test an attack like `DROP TABLE users` -> CloudShield will block this instantly.
-4. Go to `http://127.0.0.1:5000/dashboard` to see the logs of blocked attacks.
+Open http://127.0.0.1:5000
+
+## What's New vs Original
+
+### Security
+- 10 threat categories: SQLi, XSS, Path Traversal, Command Injection, SSRF, XXE, Prototype Pollution, Null Byte, Encoding Abuse, Long Payload
+- Severity scoring (1-10 per rule) with a configurable block threshold
+- Returns structured threat metadata (names + risk score 0-100)
+- Low-severity flags allowed through with a caution note
+
+### Rate Limiting
+- Sliding-window limiter (20 req / 60 s per IP, configurable)
+- Returns `retry_after` seconds in JSON response
+- Thread-safe
+
+### Logging
+- Structured TSV format: timestamp, IP, verdict, risk_score, payload, reason
+- Stats rebuilt from file on startup (survives restarts)
+- `/dashboard` shows parsed table + raw tail
+
+### API
+- `GET /api/analyze?payload=...` — JSON response for AJAX use
+- `GET /api/stats` — aggregate counters
+- `GET /health` — liveness probe
+
+### UI
+- Async JS frontend (no full-page reload)
+- Quick-test chips for common attack strings
+- Live stats bar updates after each test
+- Threat tags displayed inline
+- Fully dark theme with CSS variables
+
+## Configuration
+
+| Variable | Default | Description |
+|---|---|---|
+| `SECRET_KEY` env var | random | Flask secret key |
+| `RateLimiter(max_requests=20, window_seconds=60)` | — | Tune in app.py |
+| `BLOCK_THRESHOLD` in security.py | 5 | Min severity to block |
