@@ -329,15 +329,15 @@ HOME_HTML = """<!DOCTYPE html>
       <div class="stat-label">Total Tested</div>
     </div>
     <div class="stat">
-      <div class="stat-value" style="color:#ff5252">{{ stats.blocked }}</div>
+      <div class="stat-value" id="blocked-stat" style="color:#ff5252">{{ stats.blocked }}</div>
       <div class="stat-label">Blocked</div>
     </div>
     <div class="stat">
-      <div class="stat-value" style="color:#00e676">{{ stats.allowed }}</div>
+      <div class="stat-value" id="allowed-stat" style="color:#00e676">{{ stats.allowed }}</div>
       <div class="stat-label">Allowed</div>
     </div>
     <div class="stat">
-      <div class="stat-value" style="color:#ffc107">{{ stats.rate_limited }}</div>
+      <div class="stat-value" id="rate-limited-stat" style="color:#ffc107">{{ stats.rate_limited }}</div>
       <div class="stat-label">Rate Limited</div>
     </div>
   </div>
@@ -422,6 +422,9 @@ HOME_HTML = """<!DOCTYPE html>
         const sr = await fetch('/api/stats');
         const st = await sr.json();
         document.getElementById('total-stat').textContent = st.total;
+        document.getElementById('blocked-stat').textContent = st.blocked;
+        document.getElementById('allowed-stat').textContent = st.allowed;
+        document.getElementById('rate-limited-stat').textContent = st.rate_limited;
       } catch(err) {
         area.innerHTML = '<div class="result-detail" style="color:var(--warn);padding:10px 0">Error contacting server.</div>';
       }
