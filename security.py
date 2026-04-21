@@ -27,7 +27,7 @@ RULES: List[ThreatRule] = [
             r"(\b(select|insert|update|delete|drop|create|alter|truncate|exec|union|from|where|having|order\s+by|group\s+by)\b"
             r"|\b(or|and)\s+[\w'\"]+\s*=\s*[\w'\"]+"
             r"|--|;.*--"
-            r"|'\s*(or|and)\s+'",
+            r"|'\s*(or|and)\s+')",
             re.IGNORECASE,
         ),
         description="SQL Injection pattern detected",
